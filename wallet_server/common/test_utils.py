@@ -1,15 +1,5 @@
 import threading
 
-from django.contrib.auth.models import User
-from rest_framework import serializers
-
-from wallet.models import Wallet
-
-
-def create_user(username, password, wallet_point):
-    user = User.objects.create_superuser(username=username, email='', password=password)
-    Wallet.objects.create(user=user, point=wallet_point)
-
 
 def test_concurrently(times):
     """
@@ -45,12 +35,3 @@ def test_concurrently(times):
         return wrapper
 
     return test_concurrently_decorator
-
-
-class PointSerializer(serializers.Serializer):
-    point = serializers.IntegerField()
-
-    def validate_point(self, point):
-        if point <= 0:
-            raise serializers.ValidationError('point <= 0')
-        return point

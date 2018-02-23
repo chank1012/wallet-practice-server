@@ -18,10 +18,11 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from rest_framework.routers import SimpleRouter
 
-from wallet.views import WalletViewSet
+from wallet.views import WalletViewSet, CoolWalletViewSet
 
 router = SimpleRouter()
 router.register('wallet', WalletViewSet)
+router.register('cool_wallet', CoolWalletViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

@@ -4,11 +4,29 @@
 
 ## Shortcut ##
 
+### (1) Wallet test ###
+
+API를 동시에 여러 번 호출하였을 때, point가 정상적으로 차감되는지 테스트합니다.
+
 `wallet/models.py`에 Wallet 모델과 여러가지 `use` 함수가 구현되어 있습니다.
 
-`wallet/views.py`에서 `use` 함수를 호출합니다.
+`wallet/views.py`에 `use` 함수를 호출하는 API가 구현되어 있습니다.
 
-`wallet/tests.py`에서 각 view를 concurrent하게 호출하고, 포인트가 정상적으로 차감되었는지 검사합니다.
+`wallet/tests.py`에서 각 API를 concurrent하게 호출하고, 포인트가 정상적으로 차감되었는지 검사합니다.
+
+- unsafe tests : 올바르게 구현하지 않은 경우, 오류 발생
+
+- safe tests : 올바르게 구현하였으므로, 오류 없음
+
+### (2) Cool wallet test ###
+
+API에 Cooldown(연속해서 호출할 수 없도록 minimum period를 두는 기능)을 적용하여 정상적으로 작동하는지 테스트합니다.
+
+`common/cooldown.py`에 `apply_cooldown` decorator가 구현되어 있습니다.
+
+`wallet/views.py`에 Cooldown이 적용된 API가 구현되어 있습니다.
+
+`wallet/tests.py`에서 API를 호출하고, Cooldown이 정상작동하는지 테스트합니다.
 
 ## Important things ##
 
@@ -27,7 +45,9 @@
     "DATABASE_HOST": "aa",
     "DATABASE_USER": "bb",
     "DATABASE_PASSWORD": "cc",
-    "DATABASE_NAME": "dd"
+    "DATABASE_NAME": "dd",
+    "REDIS_LOCATION": "redis://127.0.0.1:6379/1",
+    "REDIS_KEY_PREFIX": "wallet"
   }
   ```
 
