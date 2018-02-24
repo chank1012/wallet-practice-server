@@ -28,6 +28,28 @@ API에 Cooldown(연속해서 호출할 수 없도록 minimum period를 두는 �
 
 `wallet/tests.py`에서 API를 호출하고, Cooldown이 정상작동하는지 테스트합니다.
 
+- unsafe cooldown :
+
+  ```
+  if cache.get(key):
+    fail
+  else:
+    cache.set(key, 1, timeout)
+  ```
+
+  실험 결과 : 약 5% 의 확률로 오작동
+
+- safe cooldown :
+
+  ```
+  if lock.acquire(key):
+    success
+  else:
+    fail
+  ```
+
+  실험 결과 : 약 0.5%의 확률로 오작동
+
 ## Important things ##
 
 - test driven!

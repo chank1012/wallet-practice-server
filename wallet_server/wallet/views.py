@@ -4,7 +4,7 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from common.cooldown import apply_cooldown
+from common.cooldown import apply_unsafe_cooldown, apply_safe_cooldown
 from wallet.models import Wallet
 from wallet.serializers import PointSerializer
 
@@ -53,8 +53,17 @@ class CoolWalletViewSet(GenericViewSet):
     permission_classes = permissions.IsAuthenticated,
 
     @list_route(methods=['post'])
-    @apply_cooldown(seconds=1.0)
-    def safe_use_1(self, request):
+    @apply_unsafe_cooldown(seconds=1.0)
+    def unsafe_use(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        with transaction.atomic():
+            Wallet.safe_use_1(request.user.wallet, serializer.validated_data['point'])
+        return Response()
+
+    @list_route(methods=['post'])
+    @apply_safe_cooldown(seconds=1.0)
+    def safe_use(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
